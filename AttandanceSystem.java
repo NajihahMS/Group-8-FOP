@@ -1,111 +1,79 @@
-import java.io.*;
-import java.util.Scanner;
-import java.util.ArrayList;
 
-public class LoginSystem {
-    private dataStateLoad data;
-    private Scanner sc;
-    private Employee loggedInEmployee = null;
 
-    public LoginSystem(dataStateLoad data) {
-        this.data = data;
-        this.sc = new Scanner(System.in);
-    }
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-    // ===========================
-    // 1. LOGIN FUNCTION
-    // ===========================
-    public Employee login() {
-        System.out.println("\n--- LOGIN ---");
-        System.out.print("Enter Username (Employee Name): ");
-        String username = sc.nextLine();
-        System.out.print("Enter Password: ");
-        String password = sc.nextLine();
+public class AttendanceSystem {
 
-        // Check against loaded data
-        for (Employee e : data.employees) {
-            // You can match by Name or ID. Here we use Name as per prompt context.
-            if (e.employeeName.equalsIgnoreCase(username) && e.password.equals(password)) {
-                loggedInEmployee = e;
-                System.out.println("Login Successful! Welcome, " + e.employeeName);
-                return loggedInEmployee;
-            }
-        }
+    // Helper formatter for displaying dates nicely (e.g., 2025-10-13 09:58 a.m.)
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        System.out.println("Invalid Username or Password.");
-        return null;
-    }
+    // We store the 'Clock In' time in memory to calculate total hours later
+    private static LocalDateTime currentSessionClockInTime = null;
 
-    // ===========================
-    // 2. LOGOUT FUNCTION
-    // ===========================
-    public void logout() {
-        if (loggedInEmployee != null) {
-            System.out.println("Goodbye, " + loggedInEmployee.employeeName + "!");
-            loggedInEmployee = null;
-        } else {
-            System.out.println("No user is currently logged in.");
-        }
-    }
-
-    // ===========================
-    // 3. REGISTER NEW EMPLOYEE
-    // ===========================
-    public void registerNewEmployee() {
-        // Security check: Only Managers usually register new staff
-        if (loggedInEmployee != null && !loggedInEmployee.role.equalsIgnoreCase("Manager")) {
-            System.out.println("Access Denied: Only Managers can register new employees.");
+    // ==========================================
+    // CLOCK IN
+    // ==========================================
+    public static void clockIn(Employee currentUser) {
+        // Prevent double clock-in
+        if (currentSessionClockInTime != null) {
+            System.out.println("\n[!] You are already clocked in since " + currentSessionClockInTime.format(formatter));
             return;
         }
 
-        System.out.println("\n--- REGISTER NEW EMPLOYEE ---");
-        
-        System.out.print("Enter New Employee ID (e.g., C6005): ");
-        String id = sc.nextLine();
+        currentSessionClockInTime = LocalDateTime.now();
+        String dateStr = currentSessionClockInTime.toLocalDate().toString();
+        String timeStr = currentSessionClockInTime.toLocalTime().toString();
 
-        // Check for duplicate ID
-        for (Employee e : data.employees) {
-            if (e.employeeID.equalsIgnoreCase(id)) {
-                System.out.println("Error: Employee ID already exists.");
-                return;
-            }
+        System.out.println("\n=== Attendance Clock In ===");
+        System.out.println("Employee ID: " + currentUser.getId());
+        System.out.println("Name: " + currentUser.getName());
+        System.out.println("Clock In Successful!");
+        System.out.println("Time: " + currentSessionClockInTime.format(formatter));
+
+        // Format: EmpID,Type,Date,Time
+        // Example: C6001,IN,2025-10-13,09:58
+        String record = currentUser.getId() + ",IN," + dateStr + "," + timeStr;
+        
+        // Send to Storage
+        storageManagement.logAttendance(record);
+    }
+
+    // ==========================================
+    // CLOCK OUT
+    // ==========================================
+    public static void clockOut(Employee currentUser) {
+        if (currentSessionClockInTime == null) {
+            System.out.println("\n[!] Error: You haven't clocked in yet!");
+            return;
         }
 
-        System.out.print("Enter Name: ");
-        String name = sc.nextLine();
+        LocalDateTime clockOutTime = LocalDateTime.now();
+        String dateStr = clockOutTime.toLocalDate().toString();
+        String timeStr = clockOutTime.toLocalTime().toString();
+
+        System.out.println("\n=== Attendance Clock Out ===");
+        System.out.println("Employee ID: " + currentUser.getId());
+        System.out.println("Name: " + currentUser.getName());
+        System.out.println("Clock Out Successful!");
+        System.out.println("Time: " + clockOutTime.format(formatter));
+
+        [span_2](start_span)// Calculate Total Hours Worked[span_2](end_span)
+        Duration duration = Duration.between(currentSessionClockInTime, clockOutTime);
+        long hours = duration.toHours();
+        long minutes = duration.toMinutes() % 60;
         
-        System.out.print("Enter Role (Manager/Staff): ");
-        String role = sc.nextLine();
+        // Use %.1f for decimal hours if preferred (e.g. 8.1 hours) or format as H:M
+        System.out.printf("Total Hours Worked: %d hours %d minutes\n", hours, minutes);
+
+        // Format: EmpID,Type,Date,Time
+        String record = currentUser.getId() + ",OUT," + dateStr + "," + timeStr;
         
-        System.out.print("Create Password: ");
-        String pass = sc.nextLine();
-
-        // 1. Create Object and add to memory list (so we can use it immediately)
-        Employee newEmp = new Employee(id, name, role, pass);
-        data.employees.add(newEmp);
-
-        // 2. Append to CSV file (Persistent Storage)
-        saveEmployeeToCSV(id, name, role, pass);
-    }
-
-    private void saveEmployeeToCSV(String id, String name, String role, String pass) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("employee.csv", true))) {
-            // Format matches Najihah's loader: ID,Name,Role,Password
-            String line = String.format("%s,%s,%s,%s", id, name, role, pass);
-            bw.write(line);
-            bw.newLine();
-            System.out.println("Employee registered and saved to database successfully.");
-        } catch (IOException e) {
-            System.out.println("Error saving to employee.csv: " + e.getMessage());
-        }
-    }
-    
-    // Helper to check login status
-    public boolean isLoggedIn() {
-        return loggedInEmployee != null;
-    }
-    
-    public Employee getCurrentUser() {
-        return loggedInEmployee;
+        // Send to Storage
+        storageManagement.logAttendance(record);
+        
+        // Reset session time so they can clock in again later if needed
+        currentSessionClockInTime = null;
     }
 }
