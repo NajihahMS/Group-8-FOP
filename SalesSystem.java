@@ -22,16 +22,7 @@ public class Sale {
         this.unitPrice = resolveUnitPrice(modelName);
     }
 
-    private double resolveUnitPrice(String modelName) {
-        ArrayList<dataStateLoad.Model> modelList = loader.getModels();
-        for (dataStateLoad.Model m : modelList) {
-            if (m.model.equalsIgnoreCase(modelName)) {
-                try { return Double.parseDouble(m.price); }
-                catch (Exception e) { return 0; }
-            }
-        }
-        return 0;
-    }
+    
     public String getModelName() { return modelName; }
     public int getQuantity() { return quantity; }
     public double getUnitPrice() { return unitPrice; }
