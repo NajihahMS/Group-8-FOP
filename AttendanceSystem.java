@@ -3,6 +3,7 @@
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import DataClass.Employee;
 
 public class AttendanceSystem {
 
@@ -27,17 +28,17 @@ public class AttendanceSystem {
         String timeStr = currentSessionClockInTime.toLocalTime().toString();
 
         System.out.println("\n=== Attendance Clock In ===");
-        System.out.println("Employee ID: " + currentUser.getId());
+        System.out.println("Employee ID: " + currentUser.getID());
         System.out.println("Name: " + currentUser.getName());
         System.out.println("Clock In Successful!");
         System.out.println("Time: " + currentSessionClockInTime.format(formatter));
 
         // Format: EmpID,Type,Date,Time
         // Example: C6001,IN,2025-10-13,09:58
-        String record = currentUser.getId() + ",IN," + dateStr + "," + timeStr;
+        String record = currentUser.getID() + ",IN," + dateStr + "," + timeStr;
         
         // Send to Storage
-        storageManagement.logAttendance(record);
+        StorageSystem.logAttendance(record);
     }
 
     // ==========================================
@@ -54,12 +55,12 @@ public class AttendanceSystem {
         String timeStr = clockOutTime.toLocalTime().toString();
 
         System.out.println("\n=== Attendance Clock Out ===");
-        System.out.println("Employee ID: " + currentUser.getId());
+        System.out.println("Employee ID: " + currentUser.getID());
         System.out.println("Name: " + currentUser.getName());
         System.out.println("Clock Out Successful!");
         System.out.println("Time: " + clockOutTime.format(formatter));
 
-        [span_2](start_span)// Calculate Total Hours Worked[span_2](end_span)
+        // Calculate Total Hours Worked
         Duration duration = Duration.between(currentSessionClockInTime, clockOutTime);
         long hours = duration.toHours();
         long minutes = duration.toMinutes() % 60;
@@ -68,10 +69,10 @@ public class AttendanceSystem {
         System.out.printf("Total Hours Worked: %d hours %d minutes\n", hours, minutes);
 
         // Format: EmpID,Type,Date,Time
-        String record = currentUser.getId() + ",OUT," + dateStr + "," + timeStr;
+        String record = currentUser.getID() + ",OUT," + dateStr + "," + timeStr;
         
         // Send to Storage
-        storageManagement.logAttendance(record);
+        StorageSystem.logAttendance(record);
         
         // Reset session time so they can clock in again later if needed
         currentSessionClockInTime = null;
