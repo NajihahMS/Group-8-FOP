@@ -25,6 +25,7 @@ public class dataStateLoad {
                 if(data.length >= 4) {
                     // Create object
                     Employee emp = new Employee(data[0].trim(), data[1].trim(), data[2].trim(), data[3].trim());
+                    //.trim() to remove extra spaces
                     list.add(emp);
                 }
             }
@@ -48,7 +49,7 @@ public class dataStateLoad {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error reading outlet.csv");
+            System.out.println("Error reading outlet.csv: " + e.getMessage());
         }
         return list;
     }
