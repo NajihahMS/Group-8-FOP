@@ -9,7 +9,7 @@ import java.util.List;
 //           DATA CLASSES 
 //=========================================
 
-class Employee {
+public class Employee {
     private String employeeID;
     private String employeeName;
     private String role;
@@ -34,7 +34,7 @@ class Employee {
 }
 
 
-class Outlet{
+public class Outlet{
     private String outletCode;
     private String outletName;
 
@@ -46,7 +46,7 @@ class Outlet{
     public String getName() { return outletName; }
 }
 
-class Model{
+public class Model{
     private String modelName;
     private double price; // Changed to double for Math
     // Stocks for specific outlets (Changed to int for Math)
