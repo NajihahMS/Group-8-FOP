@@ -32,21 +32,23 @@ public class SalesSystem {
         saveDailyTransactionsForCustomer(newCustomer);
     }
 
-    private void updateStock(Sale item) {
+private void updateStock(Sale item) {
     String modelName = item.getModelName();
     int qtySold = item.getQuantity();
 
     for (Model m : outletInventory) {
         if (m.getName().equalsIgnoreCase(modelName)) {
-            int[] stocks = m.getStocks(); // access current stock
-            for (int i = 0; i < stocks.length; i++) {
-                stocks[i] = Math.max(0, stocks[i] - qtySold); // never negative
+            for (int i = 0; i < 10; i++) {
+                int current = m.getStock(i);
+                m.setStock(i, Math.max(0, current - qtySold));
             }
-            StorageSystem.saveAllModels(); // persist changes
+            StorageSystem.saveAllModels(); // persist updated stock
             return;
         }
     }
 }
+
+
 
 
     public String generateReceipt(Customer customer) {
