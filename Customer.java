@@ -1,5 +1,3 @@
-package GoldenHour;
-
 import java.util.ArrayList;
 
 public class Customer {
@@ -20,21 +18,10 @@ public class Customer {
         if (newItem != null) purchaseList.add(newItem);
     }
 
-    public ArrayList<Sale> getPurchaseList() {
-        return purchaseList;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public String getEmployeeName() {
-        return employeeName;
-    }
+    public ArrayList<Sale> getPurchaseList() { return purchaseList; }
+    public String getCustomerName() { return customerName; }
+    public String getPaymentMethod() { return paymentMethod; }
+    public String getEmployeeName() { return employeeName; }
 
     public double getTotalPrice() {
         double total = 0;
