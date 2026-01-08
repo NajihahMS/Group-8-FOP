@@ -1,10 +1,9 @@
 import java.util.Scanner;
 
-/
- * PARENT CLASS (Base class)
+/** PARENT CLASS (Base class)
  * Child classes like SearchInfo and EditInfo will EXTEND this class
  * and OVERRIDE run() (polymorphism).
- */
+ **/
 public abstract class Info {
 
     // Scanner is from java.util (built-in Java library)
@@ -19,7 +18,7 @@ public abstract class Info {
         this.outletIndex = outletIndex;
     }
 
-    /
+    /** 
      * Polymorphism method:
      * Every child class MUST override run().
      * When you do:
@@ -29,7 +28,7 @@ public abstract class Info {
      */
     public abstract void run();
 
-    /
+    /** 
      * Read an integer safely (keeps asking until user enters valid number)
      */
     protected int readInt(String prompt) {
@@ -44,7 +43,7 @@ public abstract class Info {
         }
     }
 
-    /
+    /** 
      * Read Y/N safely
      */
     protected boolean readYes(String prompt) {
@@ -60,9 +59,7 @@ public abstract class Info {
     }
 
     /**
-     * Format RM like sample output:
-     * RM349 (not RM349.00)
-     * This helps match the PDF output style for Unit Price and Total :contentReference[oaicite:0]{index=0}
+     * format: RM349 (not RM349.00)
      */
     protected String formatRM(double amount) {
         // If it's a whole number, print without decimal

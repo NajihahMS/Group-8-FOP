@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap; // essential for grouping & totaling data
 import java.util.Map;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalFields;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 

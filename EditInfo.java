@@ -4,9 +4,7 @@ import DataClass.Model;
 
 /**
  * CHILD CLASS: Edit Information (Stock + Sales)
- * - Compatible with your friends' Model.java (getName(), c60..c69)
  * - Uses StorageSystem.saveAllModels() to persist updated stock
- * - Output wording follows the PDF samples :contentReference[oaicite:1]{index=1}
  */
 public class EditInfo extends Info {
 
@@ -40,14 +38,13 @@ public class EditInfo extends Info {
     }
 
     // =========================
-    // 1) Edit Stock Information (PDF page 9)
+    // 1) Edit Stock Information 
     // =========================
     private void editStock() {
         System.out.println("\n=== Edit Stock Information ===");
         System.out.print("Enter Model Name: ");
         String modelName = sc.nextLine().trim();
 
-        // CALLING OTHER CLASS:
         // StorageSystem.allModels is from StorageSystem (global list loaded at startup)
         Model found = null;
         for (Model m : StorageSystem.allModels) {
@@ -63,11 +60,8 @@ public class EditInfo extends Info {
             System.out.println("No record found.");
             return;
         }
-
-        // Read current stock for THIS outlet only (based on outletIndex 0..9)
-        // CALLING OTHER CLASS:
         // Model.c60..c69 are public fields in DataClass.Model
-        int current = getStock(found, outletIndex);
+        int current = getStock(found, outletIndex); // call other class
 
         System.out.println("Current Stock: " + current);
         int newStock = readInt("Enter New Stock Value: ");
@@ -75,15 +69,14 @@ public class EditInfo extends Info {
         // Update stock in memory
         setStock(found, outletIndex, newStock);
 
-        // CALLING OTHER CLASS:
         // StorageSystem.saveAllModels() writes updated list back to model.csv
-        StorageSystem.saveAllModels();
+        StorageSystem.saveAllModels();  //call other class
 
         System.out.println("Stock information updated successfully.");
     }
 
     // =========================
-    // 2) Edit Sales Information (PDF page 9)
+    // 2) Edit Sales Information 
     // =========================
     private void editSales() {
         System.out.println("\n=== Edit Sales Information ===");
@@ -120,7 +113,7 @@ public class EditInfo extends Info {
             return;
         }
 
-        // Find column indexes (flexible: supports your friends' header OR extended header)
+        // Find column indexes 
         int idxDate = findCol(header, "Date");
         int idxCustomer = findCol(header, "Customer");
         int idxModel = findCol(header, "Model");
@@ -131,7 +124,7 @@ public class EditInfo extends Info {
         int idxMethod = findCol(header, "TransactionMethod");
         if (idxMethod == -1) idxMethod = findCol(header, "Transaction Method");
 
-        // Locate the record by Date + Customer (like PDF)
+        // Locate the record by Date + Customer 
         int foundIndex = -1;
         for (int i = 0; i < rows.size(); i++) {
             String[] r = rows.get(i);
@@ -172,11 +165,6 @@ public class EditInfo extends Info {
             return;
         }
 
-        // NOTE about PDF sample:
-        // The PDF shows user typed > 4 then it asked "Enter New Transaction Method"
-        // (but menu says 4 = Total). To be safe and match sample, we allow 4 OR 5
-        // to edit Transaction Method.
-
         if (opt == 1) {
             System.out.print("Enter New Customer Name: ");
             String newName = sc.nextLine().trim();
@@ -207,7 +195,7 @@ public class EditInfo extends Info {
             }
 
         } else if (opt == 4) {
-            // Option 4 = Edit Total (as per instruction)
+            // Option 4 = Edit Total
             System.out.print("Enter New Total: ");
             String newTotal = sc.nextLine().trim();
             if (readYes("Confirm Update? (Y/N): ")) {
@@ -227,14 +215,12 @@ public class EditInfo extends Info {
                 System.out.println("Sales information updated successfully.");
             }
         }
-
-
-        } else {
+        else {
             System.out.println("Invalid choice.");
         }
     }
 
-    // ========= Stock helpers (no sb, simple switch) =========
+    // ========= Stock helpers 
 
     // CALLING OTHER CLASS:
     // Model fields c60..c69 are from DataClass.Model
@@ -279,22 +265,13 @@ public class EditInfo extends Info {
     }
 
     private String getSafe(String[] row, int idx) {
-        if (idx < 0  idx >= row.length) return "Unknown";
+        if (idx < 0 || idx >= row.length) return "Unknown";
         return row[idx].trim();
     }
 
     private void setSafe(String[] row, int idx, String value) {
-        if (idx < 0  idx >= row.length) return;
+        if (idx < 0 || idx >= row.length) return;
         row[idx] = value;
-    }
-
-    private void ensureMethodColumnExistsOrWarn(int idxMethod) {
-        // If your CSV does not have transaction method column, editing won't work.
-        // You can ignore this if your team already added the column.
-        if (idxMethod == -1) {
-            System.out.println("Warning: Transaction Method column not found in CSV header.");
-            System.out.println("Ask your Sales module team to include TransactionMethod column.");
-        }
     }
 
     private void saveSalesFile(String[] header, ArrayList<String[]> rows) {
