@@ -84,18 +84,3 @@ public class dataStateLoad {
     }
 }
   
-    //========================================
-    //           ACCESSOR METHODS
-    //========================================
-    public ArrayList<Employee> getEmployees() {
-         return employees;
-    }
-
-    public ArrayList<Outlet> getOutlets() {
-        return outlets;
-    }
-
-    public ArrayList<Model> getModels() {
-        return models;
-    }   
-}
