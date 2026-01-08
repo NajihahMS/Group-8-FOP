@@ -5,19 +5,24 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import DataClass.Model; // Link to the new Model class
+import DataClass.Model;
 
+/**
+ * Handles the logic for physical stock counts and stock movements (In/Out).
+ * Updates the inventory list and logs transactions to text files.
+ */
 public class StockManagement {
-    private List<Model> inventory; // list to hold watch model
+    private List<Model> inventory; // Refer to the main list of watch models
     private Scanner input = new Scanner(System.in);
-    private final int OUTLET_INDEX = 0;  // Assuming 0 is the index for the current outlet (e.g., C60)
+    private final int OUTLET_INDEX = 0; // Fixed index represent outlet (e.g., C60)
 
     public StockManagement(List<Model> inventory) { //constructor
         this.inventory = inventory;
     }
 
-    // --- FEATURE 1: MORNING/NIGHT COUNT ---
+    // --- FEATURE 1: STOCK COUNT ---
     public void performStockCount(String session) {
+        // Initialize date and time
         DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter dtfTime = DateTimeFormatter.ofPattern("hh:mm a");
         LocalDateTime now = LocalDateTime.now(); 
@@ -25,47 +30,42 @@ public class StockManagement {
         System.out.println("\n=== " + session + " Stock Count ===");
         System.out.println("Date: " + now.format(dtfDate));
         System.out.println("Time: " + now.format(dtfTime).toLowerCase());
-        System.out.println();
 
         int tallyCorrect = 0;
         int mismatches = 0;
 
-       // Loop through every watch model in the inventory list
+        // loop through every watch in the inventory
         for (Model watch : inventory) {
             System.out.print("Model: " + watch.getName() + " - Counted: ");
-            int counted = input.nextInt(); // Get user's physical count
+            int counted = input.nextInt(); // get User input for physical count
             
-            // Get the current stock number from the system for this specific outlet
+            // get current system stock for the specific outlet index
             int systemRecord = watch.getStocks()[OUTLET_INDEX];
             
             System.out.println("Store Record: " + systemRecord);
             
-            // Compare physical count vs system record
+            //  Check if physical count matches system record
             if (counted == systemRecord) {
                 System.out.println("Stock tally correct.\n");
                 tallyCorrect++;
-            } else {
-                // Calculate the difference if they don't match
+            } else { //calculate diff if not matched
                 int diff = Math.abs(counted - systemRecord);
                 System.out.println("! Mismatch detected (" + diff + " unit difference)\n");
                 mismatches++;
             }
         }
-
-        // Print final summary of the audit
-        System.out.println("\nTotal Models Checked: " + inventory.size());
-        System.out.println("Tally Correct: " + tallyCorrect);
-        System.out.println("Mismatches: " + mismatches);
+        System.out.println("Count completed. Correct: " + tallyCorrect + " | Mismatches: " + mismatches);
     }
 
-public void handleMovement(String type, String staffName) {
+    // --- FEATURE 2: STOCK IN/OUT ---
+    public void handleMovement(String type, String staffName) {
         LocalDateTime now = LocalDateTime.now();
         String dateStr = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String timeStr = now.format(DateTimeFormatter.ofPattern("hh:mm a")).toLowerCase();
 
-        System.out.println("\n=== " + type + " ===");
+        //  Where is the stock coming from and going to?
         System.out.print("From (Outlet Code): ");
-        input.nextLine(); // Clear the scanner buffer to avoid skipping input
+        input.nextLine(); // Clear scanner buffer
         String from = input.nextLine();
         System.out.print("To (Outlet Code): ");
         String to = input.nextLine();
@@ -74,11 +74,11 @@ public void handleMovement(String type, String staffName) {
         int totalQuantity = 0;
         boolean updated = false;
 
-        // Loop to allow adding multiple different models in one transaction
+        // Loop allows user to add multiple different models in one transaction
         while (true) {
-            System.out.print("Enter Model Name (or 'done' to finish): ");
+            System.out.print("Enter Model Name (or 'done'): ");
             String name = input.nextLine();
-            if (name.equalsIgnoreCase("done")) break; // Exit loop when user types 'done'
+            if (name.equalsIgnoreCase("done")) break; //exit loop when user type done
 
             // Search for the model in the inventory list by name
             Model foundWatch = null;
@@ -94,16 +94,15 @@ public void handleMovement(String type, String staffName) {
                 int qty = input.nextInt();
                 input.nextLine(); // Clear buffer
 
+                // Calculate the new stock level based on movement type
                 int currentQty = foundWatch.getStocks()[OUTLET_INDEX];
-                // Update logic: Add for "Stock In", Subtract for "Stock Out"
-                if (type.equalsIgnoreCase("Stock In")) {
-                    foundWatch.getStocks()[OUTLET_INDEX] = currentQty + qty;
-                } else {
-                    foundWatch.getStocks()[OUTLET_INDEX] = currentQty - qty;
-                }
+                int newQty = type.equalsIgnoreCase("Stock In") ? currentQty + qty : currentQty - qty;
                 
-                // Add details to a list for the receipt
-                movedModels.add("- " + foundWatch.getName() + " (Quantity: " + qty + ")");
+                // Update the actual object in memory
+                foundWatch.setStock(OUTLET_INDEX, newQty);
+                
+                // Track itemized list for the receipt
+                movedModels.add("- " + foundWatch.getName() + " (Qty: " + qty + ")");
                 totalQuantity += qty;
                 updated = true;
             } else {
@@ -111,40 +110,28 @@ public void handleMovement(String type, String staffName) {
             }
         }
 
-        // If changes were made, save to permanent CSV file and generate a text receipt
+        // If at least one item was updated, persist changes to CSV and generate receipt
         if (updated) {
             StorageSystem.saveAllModels(); 
             generateReceipt(type, from, to, movedModels, totalQuantity, staffName, dateStr, timeStr);
         }
     }
 
-private void generateReceipt(String type, String from, String to, java.util.ArrayList<String> models, 
+  //generate reciept
+    private void generateReceipt(String type, String from, String to, java.util.ArrayList<String> models, 
                                  int totalQty, String staff, String date, String time) {
-        // Create a unique filename based on the current date
         String fileName = "receipts_" + date + ".txt";
-        
-        // try-with-resources 
-        try (FileWriter fw = new FileWriter(fileName, true); // 'true' means append to the file
+        try (FileWriter fw = new FileWriter(fileName, true); // 'true' enables appending to file
              PrintWriter pw = new PrintWriter(fw)) {
-            
             pw.println("=== " + type + " ===");
-            pw.println("Date: " + date);
-            pw.println("Time: " + time);
-            pw.println("From: " + from);
-            pw.println("To: " + to);
-            pw.println(type.equals("Stock In") ? "Models Received:" : "Models Sent:");
-            
-            // Print each item moved
-            for (String m : models) pw.println(m);
-            
-            pw.println("Total Quantity: " + totalQty);
-            pw.println("Name of Employee in Charge: " + staff);
+            pw.println("Date: " + date + " | Time: " + time);
+            pw.println("From: " + from + " | To: " + to);
+            for (String m : models) pw.println(m); // Print each itemized movement
+            pw.println("Total: " + totalQty + " | Staff: " + staff);
             pw.println("---------------------------");
-
-            System.out.println("\nModel quantities updated and saved to CSV.");
-            System.out.println("Receipt generated: " + fileName);
+            System.out.println("Receipt saved to " + fileName);
         } catch (IOException e) {
-            System.out.println("Error saving receipt.");
+            System.out.println("Error saving receipt: " + e.getMessage());
         }
     }
 }
