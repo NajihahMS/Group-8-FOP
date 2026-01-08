@@ -1,87 +1,89 @@
-
-
+import java.util.ArrayList;
 import java.util.Scanner;
-import DataClass.Employee;
 
 public class LoginSystem {
 
-    // ==========================================
-    // 1. LOGIN SYSTEM
-    // ==========================================
-    public static Employee login(Scanner scanner) {
-        System.out.println("\n=== Employee Login ===");
-        
-        while (true) {
-            System.out.print("Enter User ID: ");
-            String inputId = scanner.nextLine().trim();
+    // Simpan data employee
+    private ArrayList<String> ids = new ArrayList<>();
+    private ArrayList<String> names = new ArrayList<>();
+    private ArrayList<String> passwords = new ArrayList<>();
+    private ArrayList<String> outlets = new ArrayList<>();
 
-            System.out.print("Enter Password: ");
-            String inputPass = scanner.nextLine().trim();
+    // Employee yang sedang login
+    private int currentIndex = -1;
 
-            // Search in the loaded data from StorageSystem
-            for (Employee emp : StorageSystem.allEmployees) {
-                if (emp.getID().equalsIgnoreCase(inputId) && emp.getPassword().equals(inputPass)) {
-                    System.out.println("\nLogin Successful!");
-                    System.out.println("Welcome, " + emp.getName() + " (" + emp.getRole() + ")");
-                    return emp; // Return the logged-in object
-                }
-            }
-
-            // Display unsuccessful attempt message
-            System.out.println("Login Failed: Invalid User ID or Password. Try again.");
-            System.out.print("Press Enter to retry or type 'EXIT' to quit: ");
-            if (scanner.nextLine().equalsIgnoreCase("EXIT")) return null;
-        }
+    public LoginSystem() {
+        // Default employee
+        ids.add("C6001");
+        names.add("Tan Guan Han");
+        passwords.add("a2b1c0");
+        outlets.add("C60 (Kuala Lumpur City Centre)");
     }
 
-    // ==========================================
-    // 2. REGISTRATION SYSTEM (Manager Only)
-    // ==========================================
-    public static void registerNewEmployee(Scanner scanner, Employee currentUser) {
-        //Only manager is authorized
-        if (!currentUser.getRole().equalsIgnoreCase("Manager")) {
-            System.out.println("\n[!] Access Denied: Only Managers can register new employees.");
-            return;
+    // LOGIN
+    public boolean login() {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("=== Employee Login ===");
+        System.out.print("Enter User ID: ");
+        String id = sc.nextLine();
+
+        System.out.print("Enter Password: ");
+        String pass = sc.nextLine();
+        System.out.println();
+
+        for (int i = 0; i < ids.size(); i++) {
+            if (ids.get(i).equals(id) && passwords.get(i).equals(pass)) {
+                currentIndex = i;
+                System.out.println("Login Successful!");
+                System.out.println("Welcome, " + names.get(i) + " (" + outlets.get(i).substring(0, 3) + ")");
+                System.out.println();
+                return true;
+            }
         }
 
-        System.out.println("\n=== Register New Employee ===");
+        System.out.println("Login Failed: Invalid User ID or Password.");
+        System.out.println();
+        return false;
+    }
 
+    // REGISTER EMPLOYEE
+    public void registerEmployee() {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("=== Register New Employee ===");
         System.out.print("Enter Employee Name: ");
-        String name = scanner.nextLine();
+        String name = sc.nextLine();
 
-        String id;
-        while (true) {
-            System.out.print("Enter New Employee ID: ");
-            id = scanner.nextLine().trim();
-
-            // Check for duplicate ID
-            boolean exists = false;
-            for (Employee emp : StorageSystem.allEmployees) {
-                if (emp.getID().equalsIgnoreCase(id)) {
-                    exists = true;
-                    break;
-                }
-            }
-
-            if (exists) {
-                System.out.println("Error: Employee ID '" + id + "' already exists. Please choose another.");
-            } else {
-                break; // ID is valid
-            }
-        }
+        System.out.print("Enter Employee ID: ");
+        String id = sc.nextLine();
 
         System.out.print("Set Password: ");
-        String password = scanner.nextLine();
+        String pass = sc.nextLine();
 
-        System.out.print("Set Role (Manager/Full-time/Part-time): ");
-        String role = scanner.nextLine();
+        System.out.print("Set Role: ");
+        sc.nextLine(); // role tak digunakan lagi (basic feature)
 
-        // Create new object and add to global list
-        // Note: Ensure your Employee constructor matches this order
-        Employee newEmp = new Employee(name, id, password, role); 
-        StorageSystem.allEmployees.add(newEmp);
+        ids.add(id);
+        names.add(name);
+        passwords.add(pass);
+        outlets.add("C60 (Kuala Lumpur City Centre)");
 
-        // Reminder: You still need to implement saveEmployees() in StorageSystem to persist this!
+        System.out.println();
         System.out.println("Employee successfully registered!");
+        System.out.println();
+    }
+
+    // Getter untuk AttendanceSystem
+    public String getId() {
+        return ids.get(currentIndex);
+    }
+
+    public String getName() {
+        return names.get(currentIndex);
+    }
+
+    public String getOutlet() {
+        return outlets.get(currentIndex);
     }
 }
