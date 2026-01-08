@@ -1,4 +1,4 @@
-package Nabilah;
+package GoldenHour;
 
 import Najihah.dataStateLoad;
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ public class Sale {
         }
         return 0;
     }
+
     public String getModelName() { return modelName; }
     public int getQuantity() { return quantity; }
     public double getUnitPrice() { return unitPrice; }

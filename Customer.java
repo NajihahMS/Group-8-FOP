@@ -1,4 +1,4 @@
-package Nabilah;
+package GoldenHour;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,6 @@ public class Customer {
         this.purchaseList = new ArrayList<>();
     }
 
-    
     public void addPurchase(Sale newItem) {
         if (newItem != null) purchaseList.add(newItem);
     }
