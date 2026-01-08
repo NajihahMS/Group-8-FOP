@@ -1,8 +1,9 @@
 
 
 import java.util.Scanner;
+import DataClass.Employee;
 
-public class AuthSystem {
+public class LoginSystem {
 
     // ==========================================
     // 1. LOGIN SYSTEM
@@ -17,16 +18,16 @@ public class AuthSystem {
             System.out.print("Enter Password: ");
             String inputPass = scanner.nextLine().trim();
 
-            // Search in the loaded data from storageManagement
-            for (Employee emp : storageManagement.allEmployees) {
-                if (emp.getId().equalsIgnoreCase(inputId) && emp.getPassword().equals(inputPass)) {
+            // Search in the loaded data from StorageSystem
+            for (Employee emp : StorageSystem.allEmployees) {
+                if (emp.getID().equalsIgnoreCase(inputId) && emp.getPassword().equals(inputPass)) {
                     System.out.println("\nLogin Successful!");
                     System.out.println("Welcome, " + emp.getName() + " (" + emp.getRole() + ")");
                     return emp; // Return the logged-in object
                 }
             }
 
-            [span_5](start_span)//[span_5](end_span) Display unsuccessful attempt message
+            // Display unsuccessful attempt message
             System.out.println("Login Failed: Invalid User ID or Password. Try again.");
             System.out.print("Press Enter to retry or type 'EXIT' to quit: ");
             if (scanner.nextLine().equalsIgnoreCase("EXIT")) return null;
@@ -37,7 +38,7 @@ public class AuthSystem {
     // 2. REGISTRATION SYSTEM (Manager Only)
     // ==========================================
     public static void registerNewEmployee(Scanner scanner, Employee currentUser) {
-        [span_6](start_span)//[span_6](end_span) Only manager is authorized
+        //Only manager is authorized
         if (!currentUser.getRole().equalsIgnoreCase("Manager")) {
             System.out.println("\n[!] Access Denied: Only Managers can register new employees.");
             return;
@@ -55,8 +56,8 @@ public class AuthSystem {
 
             // Check for duplicate ID
             boolean exists = false;
-            for (Employee emp : storageManagement.allEmployees) {
-                if (emp.getId().equalsIgnoreCase(id)) {
+            for (Employee emp : StorageSystem.allEmployees) {
+                if (emp.getID().equalsIgnoreCase(id)) {
                     exists = true;
                     break;
                 }
@@ -78,9 +79,9 @@ public class AuthSystem {
         // Create new object and add to global list
         // Note: Ensure your Employee constructor matches this order
         Employee newEmp = new Employee(name, id, password, role); 
-        storageManagement.allEmployees.add(newEmp);
+        StorageSystem.allEmployees.add(newEmp);
 
-        // Reminder: You still need to implement saveEmployees() in storageManagement to persist this!
+        // Reminder: You still need to implement saveEmployees() in StorageSystem to persist this!
         System.out.println("Employee successfully registered!");
     }
 }
