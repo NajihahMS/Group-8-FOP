@@ -23,6 +23,23 @@ public class Model{
         return new int[] {c60, c61, c62, c63, c64, c65, c66, c67, c68, c69};
     }
 
+    public int getStock(int index) {
+    switch(index) {
+        case 0: return c60;
+        case 1: return c61;
+        case 2: return c62;
+        case 3: return c63;
+        case 4: return c64;
+        case 5: return c65;
+        case 6: return c66;
+        case 7: return c67;
+        case 8: return c68;
+        case 9: return c69;
+        default: return 0;
+    }
+}
+
+
     public void setStock(int index, int newQuantity) {
         switch(index) {
             case 0: this.c60 = newQuantity; break;
