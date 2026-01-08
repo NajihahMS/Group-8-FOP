@@ -2,7 +2,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 import DataClass.Employee;
 import DataClass.Model;
 
@@ -27,14 +26,14 @@ public class MainGUI extends JFrame {
         // Run GUI in Event Dispatch Thread
         SwingUtilities.invokeLater(() -> {
             try {
-                new GoldenHourGUI().setVisible(true);
+                new MainGUI().setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
     }
 
-    public GoldenHourGUI() {
+    public MainGUI() {
         // 1. Initialize Backend Data
         StorageSystem.initialize(); // [cite: 209]
         // Initialize SalesSystem with the loaded models
