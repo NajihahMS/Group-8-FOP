@@ -1,111 +1,87 @@
-import java.io.*;
+
+
 import java.util.Scanner;
-import java.util.ArrayList;
+import DataClass.Employee;
 
 public class LoginSystem {
-    private dataStateLoad data;
-    private Scanner sc;
-    private Employee loggedInEmployee = null;
 
-    public LoginSystem(dataStateLoad data) {
-        this.data = data;
-        this.sc = new Scanner(System.in);
-    }
+    // ==========================================
+    // 1. LOGIN SYSTEM
+    // ==========================================
+    public static Employee login(Scanner scanner) {
+        System.out.println("\n=== Employee Login ===");
+        
+        while (true) {
+            System.out.print("Enter User ID: ");
+            String inputId = scanner.nextLine().trim();
 
-    // ===========================
-    // 1. LOGIN FUNCTION
-    // ===========================
-    public Employee login() {
-        System.out.println("\n--- LOGIN ---");
-        System.out.print("Enter Username (Employee Name): ");
-        String username = sc.nextLine();
-        System.out.print("Enter Password: ");
-        String password = sc.nextLine();
+            System.out.print("Enter Password: ");
+            String inputPass = scanner.nextLine().trim();
 
-        // Check against loaded data
-        for (Employee e : data.employees) {
-            // You can match by Name or ID. Here we use Name as per prompt context.
-            if (e.employeeName.equalsIgnoreCase(username) && e.password.equals(password)) {
-                loggedInEmployee = e;
-                System.out.println("Login Successful! Welcome, " + e.employeeName);
-                return loggedInEmployee;
+            // Search in the loaded data from StorageSystem
+            for (Employee emp : StorageSystem.allEmployees) {
+                if (emp.getID().equalsIgnoreCase(inputId) && emp.getPassword().equals(inputPass)) {
+                    System.out.println("\nLogin Successful!");
+                    System.out.println("Welcome, " + emp.getName() + " (" + emp.getRole() + ")");
+                    return emp; // Return the logged-in object
+                }
             }
-        }
 
-        System.out.println("Invalid Username or Password.");
-        return null;
-    }
-
-    // ===========================
-    // 2. LOGOUT FUNCTION
-    // ===========================
-    public void logout() {
-        if (loggedInEmployee != null) {
-            System.out.println("Goodbye, " + loggedInEmployee.employeeName + "!");
-            loggedInEmployee = null;
-        } else {
-            System.out.println("No user is currently logged in.");
+            // Display unsuccessful attempt message
+            System.out.println("Login Failed: Invalid User ID or Password. Try again.");
+            System.out.print("Press Enter to retry or type 'EXIT' to quit: ");
+            if (scanner.nextLine().equalsIgnoreCase("EXIT")) return null;
         }
     }
 
-    // ===========================
-    // 3. REGISTER NEW EMPLOYEE
-    // ===========================
-    public void registerNewEmployee() {
-        // Security check: Only Managers usually register new staff
-        if (loggedInEmployee != null && !loggedInEmployee.role.equalsIgnoreCase("Manager")) {
-            System.out.println("Access Denied: Only Managers can register new employees.");
+    // ==========================================
+    // 2. REGISTRATION SYSTEM (Manager Only)
+    // ==========================================
+    public static void registerNewEmployee(Scanner scanner, Employee currentUser) {
+        //Only manager is authorized
+        if (!currentUser.getRole().equalsIgnoreCase("Manager")) {
+            System.out.println("\n[!] Access Denied: Only Managers can register new employees.");
             return;
         }
 
-        System.out.println("\n--- REGISTER NEW EMPLOYEE ---");
-        
-        System.out.print("Enter New Employee ID (e.g., C6005): ");
-        String id = sc.nextLine();
+        System.out.println("\n=== Register New Employee ===");
 
-        // Check for duplicate ID
-        for (Employee e : data.employees) {
-            if (e.employeeID.equalsIgnoreCase(id)) {
-                System.out.println("Error: Employee ID already exists.");
-                return;
+        System.out.print("Enter Employee Name: ");
+        String name = scanner.nextLine();
+
+        String id;
+        while (true) {
+            System.out.print("Enter New Employee ID: ");
+            id = scanner.nextLine().trim();
+
+            // Check for duplicate ID
+            boolean exists = false;
+            for (Employee emp : StorageSystem.allEmployees) {
+                if (emp.getID().equalsIgnoreCase(id)) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (exists) {
+                System.out.println("Error: Employee ID '" + id + "' already exists. Please choose another.");
+            } else {
+                break; // ID is valid
             }
         }
 
-        System.out.print("Enter Name: ");
-        String name = sc.nextLine();
-        
-        System.out.print("Enter Role (Manager/Staff): ");
-        String role = sc.nextLine();
-        
-        System.out.print("Create Password: ");
-        String pass = sc.nextLine();
+        System.out.print("Set Password: ");
+        String password = scanner.nextLine();
 
-        // 1. Create Object and add to memory list (so we can use it immediately)
-        Employee newEmp = new Employee(id, name, role, pass);
-        data.employees.add(newEmp);
+        System.out.print("Set Role (Manager/Full-time/Part-time): ");
+        String role = scanner.nextLine();
 
-        // 2. Append to CSV file (Persistent Storage)
-        saveEmployeeToCSV(id, name, role, pass);
-    }
+        // Create new object and add to global list
+        // Note: Ensure your Employee constructor matches this order
+        Employee newEmp = new Employee(name, id, password, role); 
+        StorageSystem.allEmployees.add(newEmp);
 
-    private void saveEmployeeToCSV(String id, String name, String role, String pass) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("employee.csv", true))) {
-            // Format matches Najihah's loader: ID,Name,Role,Password
-            String line = String.format("%s,%s,%s,%s", id, name, role, pass);
-            bw.write(line);
-            bw.newLine();
-            System.out.println("Employee registered and saved to database successfully.");
-        } catch (IOException e) {
-            System.out.println("Error saving to employee.csv: " + e.getMessage());
-        }
-    }
-    
-    // Helper to check login status
-    public boolean isLoggedIn() {
-        return loggedInEmployee != null;
-    }
-    
-    public Employee getCurrentUser() {
-        return loggedInEmployee;
+        // Reminder: You still need to implement saveEmployees() in StorageSystem to persist this!
+        System.out.println("Employee successfully registered!");
     }
 }
