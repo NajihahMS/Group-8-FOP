@@ -2,18 +2,20 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import DataClass.Employee; // Added import
 
 public class AttendanceSystem {
 
-    private LocalTime clockInTime;
+    private static LocalTime clockInTime; // Made static
 
-    public void clockIn(LoginSystem user) {
+    // Changed parameter to Employee to match MAIN and MainGUI
+    public static void clockIn(Employee user) { 
         clockInTime = LocalTime.now();
 
         System.out.println("=== Attendance Clock In ===");
-        System.out.println("Employee ID: " + user.getId());
+        System.out.println("Employee ID: " + user.getID()); // Fixed getter
         System.out.println("Name: " + user.getName());
-        System.out.println("Outlet: " + user.getOutlet());
+        // Removed getOutlet() as Employee class doesn't have it
         System.out.println();
 
         System.out.println("Clock In Successful!");
@@ -22,15 +24,20 @@ public class AttendanceSystem {
         System.out.println();
     }
 
-    public void clockOut(LoginSystem user) {
+    // Changed parameter to Employee to match MAIN and MainGUI
+    public static void clockOut(Employee user) {
+        if (clockInTime == null) {
+            System.out.println("Error: You must clock in first.");
+            return;
+        }
+        
         LocalTime clockOutTime = LocalTime.now();
         double hoursWorked =
                 Duration.between(clockInTime, clockOutTime).toMinutes() / 60.0;
 
         System.out.println("=== Attendance Clock Out ===");
-        System.out.println("Employee ID: " + user.getId());
+        System.out.println("Employee ID: " + user.getID()); // Fixed getter
         System.out.println("Name: " + user.getName());
-        System.out.println("Outlet: " + user.getOutlet());
         System.out.println();
 
         System.out.println("Clock Out Successful!");
@@ -40,7 +47,7 @@ public class AttendanceSystem {
         System.out.println();
     }
 
-    private String formatTime(LocalTime time) {
+    private static String formatTime(LocalTime time) {
         DateTimeFormatter f = DateTimeFormatter.ofPattern("hh:mm a");
         return time.format(f).toLowerCase();
     }
