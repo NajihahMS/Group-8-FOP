@@ -1,9 +1,11 @@
+import DataClass.Model;
+
 public class Sale {
 
     private String modelName;
     private int quantity;
     private double unitPrice;
-
+    
     public Sale(String modelName, int quantity) {
         this.modelName = modelName;
         this.quantity = quantity;
