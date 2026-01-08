@@ -1,10 +1,9 @@
+import DataClass.Model;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import DataClass.Model;
 
 public class SalesSystem {
 
@@ -34,14 +33,21 @@ public class SalesSystem {
     }
 
     private void updateStock(Sale item) {
-        for (Model m : outletInventory) {
-            if (m.getName().equalsIgnoreCase(item.getModelName())) {
-                m.deductStock(item.getQuantity());
-                StorageSystem.saveAllModels();  // Persist stock changes
-                return;
+    String modelName = item.getModelName();
+    int qtySold = item.getQuantity();
+
+    for (Model m : outletInventory) {
+        if (m.getName().equalsIgnoreCase(modelName)) {
+            int[] stocks = m.getStocks(); // access current stock
+            for (int i = 0; i < stocks.length; i++) {
+                stocks[i] = Math.max(0, stocks[i] - qtySold); // never negative
             }
+            StorageSystem.saveAllModels(); // persist changes
+            return;
         }
     }
+}
+
 
     public String generateReceipt(Customer customer) {
         LocalDateTime now = LocalDateTime.now();
