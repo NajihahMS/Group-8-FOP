@@ -8,22 +8,16 @@ import DataClass.Model;
 
 public class StorageSystem{
 
-   
-// 1. IN-MEMORY DATABASE (Global Lists)
-// ==========================================
-// Other classes (Login, Sales) will access these static lists directly.
 public static List<Employee> allEmployees = new ArrayList<>();
 public static List<Outlet> allOutlets = new ArrayList<>();
 public static List<Model> allModels = new ArrayList<>();
 
-// File Names (Must match exactly what is in your project folder)
+
 private static final String FILE_MODEL      = "model.csv";
 private static final String FILE_SALES      = "sales_history.csv";
 private static final String FILE_ATTENDANCE = "attendance_log.csv";
 
-// ==========================================
-// 2. INITIALIZATION (Run this ONCE at start)
-// ==========================================
+//intialize evrything
 public static void initialize() {
     System.out.println(">> System Starting: Loading Data...");
 
