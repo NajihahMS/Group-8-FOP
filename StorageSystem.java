@@ -35,12 +35,7 @@ public static void initialize() {
     System.out.println(">> Watch Models: " + allModels.size());
 }
 
-// ==========================================
-// 3. SAVING DATA (Writing back to Files)
-// ==========================================
-
-/* CRITICAL: Call this method whenever stock changes (e.g., after a sale).
-     It overwrites model.csv with the current numbers in memory. */
+//save data
 public static void saveAllModels() {
     try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_MODEL))) {
         // Write Header
@@ -73,10 +68,7 @@ public static void saveAllModels() {
         appendToFile(FILE_ATTENDANCE, attendanceRecordCSV);
     }
 
-    // ==========================================
-    // 4. HELPER METHODS (Internal Logic)
-    // ==========================================
-
+   //helper
     private static void appendToFile(String fileName, String data) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
             bw.write(data);
