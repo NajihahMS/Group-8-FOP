@@ -16,9 +16,7 @@ import DataClass.Model;
 
 public class MainGUI extends JFrame {
 
-    // =========================================
-    // GLOBAL STATE
-    // =========================================
+   //GLOBAL...
     private Employee currentUser;
     private SalesSystem salesSystem;
     
