@@ -1,46 +1,33 @@
-import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
 import java.util.Scanner;
 import DataClass.Employee; 
 
 public class LoginSystem {
 
-    // Simpan data employee (Must be static to be accessed by static methods in MAIN)
-    private static ArrayList<String> ids = new ArrayList<>();
-    private static ArrayList<String> names = new ArrayList<>();
-    private static ArrayList<String> passwords = new ArrayList<>();
-    private static ArrayList<String> outlets = new ArrayList<>();
-
-    // Initialize default data (Replaces constructor)
-    static {
-        ids.add("C6001");
-        names.add("Tan Guan Han");
-        passwords.add("a2b1c0");
-        outlets.add("C60 (Kuala Lumpur City Centre)");
-    }
-
-    // LOGIN
-    // Changed return type to Employee to satisfy MAIN.java (line 36)
+    // =========================
+    // LOGIN FUNCTION
+    // =========================
     public static Employee login(Scanner sc) {
-        // Scanner passed from MAIN, so we don't need 'new Scanner(System.in)' here
-
         System.out.println("=== Employee Login ===");
+        
         System.out.print("Enter User ID: ");
-        String id = sc.nextLine();
+        String id = sc.nextLine().trim();
 
         System.out.print("Enter Password: ");
-        String pass = sc.nextLine();
+        String pass = sc.nextLine().trim();
         System.out.println();
 
-        for (int i = 0; i < ids.size(); i++) {
-            if (ids.get(i).equals(id) && passwords.get(i).equals(pass)) {
+        // Check against the Central Storage System
+        for (Employee e : StorageSystem.allEmployees) {
+            if (e.getID().equalsIgnoreCase(id) && e.getPassword().equals(pass)) {
                 
                 System.out.println("Login Successful!"); 
-                System.out.println("Welcome, " + names.get(i) + " (" + outlets.get(i).substring(0, 3) + ")");
+                System.out.println("Welcome, " + e.getName() + " (" + e.getRole() + ")");
                 System.out.println();
                 
-                // Return an Employee object so MAIN can store it in 'currentUser'
-                // We use "Part-time" as default role since your list didn't have roles
-                return new Employee(ids.get(i), names.get(i), "Part-time", passwords.get(i));
+                return e; // Return the valid employee object
             }
         }
 
@@ -48,33 +35,59 @@ public class LoginSystem {
         return null;
     }
 
-    // REGISTER EMPLOYEE
-    // Renamed to registerNewEmployee to match MAIN.java (line 84)
+    // =========================
+    // REGISTER FUNCTION
+    // =========================
     public static void registerNewEmployee(Scanner sc, Employee currentUser) {
+        // 1. Security Check
+        if (!currentUser.getRole().equalsIgnoreCase("Manager")) {
+            System.out.println("Error: Only Managers can register new employees.");
+            return;
+        }
+
+        System.out.println("\n=== Register New Employee ==="); 
         
-        System.out.println("=== Register New Employee ==="); 
+        // 2. Input Data
         System.out.print("Enter Employee Name: ");
         String name = sc.nextLine();
 
         System.out.print("Enter Employee ID: ");
         String id = sc.nextLine();
 
+        // Check for duplicates
+        for (Employee e : StorageSystem.allEmployees) {
+            if (e.getID().equalsIgnoreCase(id)) {
+                System.out.println("Error: Employee ID " + id + " already exists.");
+                return;
+            }
+        }
+
         System.out.print("Set Password: ");
         String pass = sc.nextLine();
 
-        System.out.print("Set Role: ");
-        sc.nextLine(); // role tak digunakan lagi (basic feature)
+        System.out.print("Set Role (Manager/Staff/Part-time): ");
+        String role = sc.nextLine(); 
 
-        ids.add(id);
-        names.add(name);
-        passwords.add(pass);
-        outlets.add("C60 (Kuala Lumpur City Centre)");
+        // 3. Update Memory (RAM)
+        Employee newEmp = new Employee(id, name, role, pass);
+        StorageSystem.allEmployees.add(newEmp);
 
-        // Also add to StorageSystem so other parts of the app (like GUI) see it
-        StorageSystem.allEmployees.add(new Employee(id, name, "Part-time", pass));
+        // 4. Update File (CSV) - Keeps data after restart
+        try {
+            // 'true' turns on append mode so we don't delete old data
+            FileWriter fw = new FileWriter("employees.csv", true); 
+            PrintWriter pw = new PrintWriter(fw);
+            
+            // Format: ID,Name,Role,Password (Ensure this matches your CSV structure)
+            pw.println(id + "," + name + "," + role + "," + pass);
+            
+            pw.close();
+            System.out.println("Employee saved to database.");
+        } catch (IOException e) {
+            System.out.println("Warning: Could not save to CSV file.");
+        }
 
-        System.out.println();
-        System.out.println("Employee successfully registered!"); 
+        System.out.println("Employee " + name + " successfully registered!"); 
         System.out.println();
     }
 }
