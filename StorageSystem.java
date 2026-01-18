@@ -8,22 +8,16 @@ import DataClass.Model;
 
 public class StorageSystem{
 
-   
-// 1. IN-MEMORY DATABASE (Global Lists)
-// ==========================================
-// Other classes (Login, Sales) will access these static lists directly.
 public static List<Employee> allEmployees = new ArrayList<>();
 public static List<Outlet> allOutlets = new ArrayList<>();
 public static List<Model> allModels = new ArrayList<>();
 
-// File Names (Must match exactly what is in your project folder)
+
 private static final String FILE_MODEL      = "model.csv";
 private static final String FILE_SALES      = "sales_history.csv";
 private static final String FILE_ATTENDANCE = "attendance_log.csv";
 
-// ==========================================
-// 2. INITIALIZATION (Run this ONCE at start)
-// ==========================================
+//intialize evrything
 public static void initialize() {
     System.out.println(">> System Starting: Loading Data...");
 
@@ -41,12 +35,7 @@ public static void initialize() {
     System.out.println(">> Watch Models: " + allModels.size());
 }
 
-// ==========================================
-// 3. SAVING DATA (Writing back to Files)
-// ==========================================
-
-/* CRITICAL: Call this method whenever stock changes (e.g., after a sale).
-     It overwrites model.csv with the current numbers in memory. */
+//save data
 public static void saveAllModels() {
     try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_MODEL))) {
         // Write Header
@@ -79,10 +68,7 @@ public static void saveAllModels() {
         appendToFile(FILE_ATTENDANCE, attendanceRecordCSV);
     }
 
-    // ==========================================
-    // 4. HELPER METHODS (Internal Logic)
-    // ==========================================
-
+   //helper
     private static void appendToFile(String fileName, String data) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
             bw.write(data);

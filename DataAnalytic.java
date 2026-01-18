@@ -41,7 +41,7 @@ public class DataAnalytic {
             java.time.LocalDate date = customer.getSaleDateTime().toLocalDate();
             
             // Format keys for Daily, Weekly, and Monthly grouping
-            String dayKey = date.toString(); // e.g., "2026-01-09"
+            String dayKey = date.toString(); // e.x, "2026-01-09"
             String weekKey = date.getYear() + "-W" + date.get(weekFields.weekOfWeekBasedYear());
             String monthKey = date.getYear() + "-" + date.getMonthValue();
 

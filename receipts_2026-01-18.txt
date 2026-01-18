@@ -1,0 +1,13 @@
+=== Stock In ===
+Date: 2026-01-18
+Time: 02:43 pm
+From: 
+To: c60
+Models Received:
+  - DW2400-2 (Quantity: 2)
+  - DW2300-3 (Quantity: 1)
+Total Quantity: 3
+Employee in Charge: Tan Guan Han
+
+---------------------------
+
