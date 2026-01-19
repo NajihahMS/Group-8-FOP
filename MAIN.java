@@ -169,7 +169,7 @@ public class MAIN {
         String custName = scanner.nextLine();
         
         // 2. Add Items
-        Customer customer = new Customer(custName, "Unknown", currentUser.getName());
+        Customer customer = new Customer(custName, "Unknown", currentUser);
         boolean buying = true;
         
         while (buying) {
@@ -209,7 +209,7 @@ public class MAIN {
         // We have to recreate the customer object or set method because 
         // your Customer.java constructor forces method at the start.
         // For simplicity, we create a final customer object here with the correct method
-        Customer finalCustomer = new Customer(custName, method, currentUser.getName());
+        Customer finalCustomer = new Customer(custName, method, currentUser);
         for(Sale s : customer.getPurchaseList()) {
             finalCustomer.addPurchase(s);
         }

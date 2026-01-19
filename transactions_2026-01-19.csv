@@ -4,3 +4,5 @@ DateTime,Customer,Employee,PaymentMethod,Item,Quantity,UnitPrice,TotalPrice
 2026-01-19T02:38:26.454962300,Laila,Tan Guan Han,Card,DW2300-1,1,399.0,399.0
 2026-01-19T02:40:21.220526642,Tunku,Tan Guan Han,E-wallet,DW2300-3,2,349.0,698.0
 2026-01-19T02:41:56.382316219,Leon,Adam bin Abu,Cash,DW2300-1,1,399.0,399.0
+2026-01-19T02:57:40.769904381,Iris,Tan Guan Han,Cash,DW2300-1,2,399.0,798.0
+2026-01-19T02:57:40.769904381,Iris,Tan Guan Han,Cash,DW2300-2,1,399.0,399.0
