@@ -6,88 +6,84 @@ import DataClass.Employee;
 
 public class LoginSystem {
 
-    // =========================
-    // LOGIN FUNCTION
-    // =========================
     public static Employee login(Scanner sc) {
         System.out.println("=== Employee Login ===");
         
-        System.out.print("Enter User ID: ");
+        // Use println to ensure "Enter Password" starts on a new line
+        System.out.println("Enter User ID: ");
         String id = sc.nextLine().trim();
 
-        System.out.print("Enter Password: ");
+        // Check if user wants to exit
+        if (id.equalsIgnoreCase("EXIT")) {
+            return null;
+        }
+
+        System.out.println("Enter Password: ");
         String pass = sc.nextLine().trim();
-        System.out.println();
 
         // Check against the Central Storage System
         for (Employee e : StorageSystem.allEmployees) {
+            // Case-insensitive ID, Case-sensitive Password
             if (e.getID().equalsIgnoreCase(id) && e.getPassword().equals(pass)) {
-                
                 System.out.println("Login Successful!"); 
-                System.out.println("Welcome, " + e.getName() + " (" + e.getRole() + ")");
+                
+                // Formatting name and outlet code per requirements
+                // We use substring(0,3) to get the Outlet Code (e.g., C60) from the ID
+                String outletCode = (e.getID().length() >= 3) ? e.getID().substring(0, 3) : "N/A";
+                System.out.println("Welcome, " + e.getName() + " (" + outletCode + ")");
                 System.out.println();
                 
-                return e; // Return the valid employee object
+                return e; 
             }
         }
 
+        // If loop finishes without return, login failed
         System.out.println("Login Failed: Invalid User ID or Password."); 
+        System.out.println();
         return null;
     }
 
-    // =========================
-    // REGISTER FUNCTION
-    // =========================
     public static void registerNewEmployee(Scanner sc, Employee currentUser) {
-        // 1. Security Check
+        // Security Check: Only Manager can register
         if (!currentUser.getRole().equalsIgnoreCase("Manager")) {
-            System.out.println("Error: Only Managers can register new employees.");
+            System.out.println("Error: Only Managers are authorized to register new employees.");
             return;
         }
 
         System.out.println("\n=== Register New Employee ==="); 
         
-        // 2. Input Data
-        System.out.print("Enter Employee Name: ");
+        System.out.println("Enter Employee Name: ");
         String name = sc.nextLine();
 
-        System.out.print("Enter Employee ID: ");
+        System.out.println("Enter Employee ID: ");
         String id = sc.nextLine();
 
-        // Check for duplicates
+        // Duplicate check
         for (Employee e : StorageSystem.allEmployees) {
             if (e.getID().equalsIgnoreCase(id)) {
-                System.out.println("Error: Employee ID " + id + " already exists.");
+                System.out.println("Error: Employee ID already exists.");
                 return;
             }
         }
 
-        System.out.print("Set Password: ");
+        System.out.println("Set Password: ");
         String pass = sc.nextLine();
 
-        System.out.print("Set Role (Manager/Staff/Part-time): ");
+        System.out.println("Set Role: ");
         String role = sc.nextLine(); 
 
-        // 3. Update Memory (RAM)
+        // Update Memory
         Employee newEmp = new Employee(id, name, role, pass);
         StorageSystem.allEmployees.add(newEmp);
 
-        // 4. Update File (CSV) - Keeps data after restart
-        try {
-            // 'true' turns on append mode so we don't delete old data
-            FileWriter fw = new FileWriter("employees.csv", true); 
-            PrintWriter pw = new PrintWriter(fw);
-            
-            // Format: ID,Name,Role,Password (Ensure this matches your CSV structure)
+        // Update CSV File
+        try (FileWriter fw = new FileWriter("employees.csv", true); 
+             PrintWriter pw = new PrintWriter(fw)) {
             pw.println(id + "," + name + "," + role + "," + pass);
-            
-            pw.close();
-            System.out.println("Employee saved to database.");
+            System.out.println("Employee successfully registered!"); 
         } catch (IOException e) {
-            System.out.println("Warning: Could not save to CSV file.");
+            System.out.println("Error: Could not save to database.");
         }
-
-        System.out.println("Employee " + name + " successfully registered!"); 
         System.out.println();
     }
 }
