@@ -26,3 +26,5 @@ public class Sale {
     public double getUnitPrice() { return unitPrice; }
     public double getTotalPrice() { return unitPrice * quantity; }
 }
+
+

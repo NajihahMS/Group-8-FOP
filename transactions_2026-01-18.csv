@@ -1,0 +1,3 @@
+DateTime,Customer,Employee,PaymentMethod,Item,Quantity,UnitPrice,TotalPrice
+2026-01-18T15:18:31.036320786,Iris,Tan Guan Han,Cash,DW2300-1,2,399.0,798.0
+2026-01-18T15:18:31.036320786,Iris,Tan Guan Han,Cash,DW2300-3,2,349.0,698.0

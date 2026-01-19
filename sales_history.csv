@@ -1,2 +1,4 @@
 Date,Time,EmpID,Customer,Model,Qty,Total
 2026-01-08,19:42,C6001,tasha,DW2300-1,5,1995.00,cash
+2026-01-18,15:18,C6001,Iris,DW2300-1,2,798.00,Cash
+2026-01-18,15:18,C6001,Iris,DW2300-3,2,698.00,Cash

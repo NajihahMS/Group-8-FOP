@@ -14,8 +14,6 @@ public class SalesSystem {
         this.customers = new ArrayList<>();
         this.outletInventory = outletInventory;
     }
-
-    // Adds a customer and processes their sale
     public void addCustomer(Customer newCustomer) {
         customers.add(newCustomer);
 
@@ -24,7 +22,7 @@ public class SalesSystem {
             updateStock(item);
         }
 
-        // Generate receipt (optional: can save to disk)
+        // Generate receipt
         String receipt = generateReceipt(newCustomer);
         System.out.println(receipt);
 
@@ -47,10 +45,6 @@ private void updateStock(Sale item) {
         }
     }
 }
-
-
-
-
     public String generateReceipt(Customer customer) {
         LocalDateTime now = LocalDateTime.now();
         StringBuilder receipt = new StringBuilder();
@@ -72,7 +66,7 @@ private void updateStock(Sale item) {
         return receipt.toString();
     }
 
-    // Logs sales for a single customer into today's transaction file
+    // Logs sales for a single customer into the day's transaction file
     private void saveDailyTransactionsForCustomer(Customer customer) {
         LocalDate today = LocalDate.now();
         String filename = "transactions_" + today + ".csv";

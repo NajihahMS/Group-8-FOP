@@ -1,12 +1,12 @@
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import DataClass.Employee;
 import DataClass.Model;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class MAIN {
-
+ 
     // Global System State
     private static Scanner scanner = new Scanner(System.in);
     private static Employee currentUser = null;
