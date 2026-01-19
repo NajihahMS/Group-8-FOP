@@ -1,5 +1,6 @@
-import java.util.ArrayList;
-import java.time.LocalDateTime; // Required for date/time functionality
+import DataClass.Employee;
+import java.time.LocalDateTime;
+import java.util.ArrayList; // Required for date/time functionality
 
 public class Customer {
 
@@ -9,10 +10,10 @@ public class Customer {
     private LocalDateTime saleDateTime; // New field to track when the sale happened
     private ArrayList<Sale> purchaseList;
 
-    public Customer(String customerName, String paymentMethod, String employeeName) {
+    public Customer(String customerName, String paymentMethod, Employee loggedInEmployee ) {
         this.customerName = customerName;
         this.paymentMethod = paymentMethod;
-        this.employeeName = employeeName;
+        this.employeeName = (loggedInEmployee != null) ? loggedInEmployee.getName() : "Unknown";
         this.purchaseList = new ArrayList<>();
         // Automatically sets the sale time to the moment the Customer object is created
         this.saleDateTime = LocalDateTime.now(); 
