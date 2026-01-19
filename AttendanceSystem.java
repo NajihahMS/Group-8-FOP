@@ -2,20 +2,21 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import DataClass.Employee; // Added import
+import DataClass.Employee;
 
 public class AttendanceSystem {
 
-    private static LocalTime clockInTime; // Made static
+    // Store clock-in time for the current user
+    private static LocalTime clockInTime;
 
-    // Changed parameter to Employee to match MAIN and MainGUI
-    public static void clockIn(Employee user) { 
-        clockInTime = LocalTime.now();
+    // Record employee starting time
+    public static void clockIn(Employee user) {
+
+        clockInTime = LocalTime.now(); // Save current time
 
         System.out.println("=== Attendance Clock In ===");
-        System.out.println("Employee ID: " + user.getID()); // Fixed getter
+        System.out.println("Employee ID: " + user.getID());
         System.out.println("Name: " + user.getName());
-        // Removed getOutlet() as Employee class doesn't have it
         System.out.println();
 
         System.out.println("Clock In Successful!");
@@ -24,19 +25,23 @@ public class AttendanceSystem {
         System.out.println();
     }
 
-    // Changed parameter to Employee to match MAIN and MainGUI
+    // Record employee ending time and calculate working hours
     public static void clockOut(Employee user) {
+
+        // Prevent clock out before clock in
         if (clockInTime == null) {
             System.out.println("Error: You must clock in first.");
             return;
         }
-        
-        LocalTime clockOutTime = LocalTime.now();
+
+        LocalTime clockOutTime = LocalTime.now(); // Save end time
+
+        // Calculate hours worked
         double hoursWorked =
                 Duration.between(clockInTime, clockOutTime).toMinutes() / 60.0;
 
         System.out.println("=== Attendance Clock Out ===");
-        System.out.println("Employee ID: " + user.getID()); // Fixed getter
+        System.out.println("Employee ID: " + user.getID());
         System.out.println("Name: " + user.getName());
         System.out.println();
 
@@ -47,6 +52,7 @@ public class AttendanceSystem {
         System.out.println();
     }
 
+    // Format time to readable form (e.g. 08:30 am)
     private static String formatTime(LocalTime time) {
         DateTimeFormatter f = DateTimeFormatter.ofPattern("hh:mm a");
         return time.format(f).toLowerCase();

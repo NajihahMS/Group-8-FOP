@@ -16,15 +16,13 @@ import DataClass.Model;
 
 public class MainGUI extends JFrame {
 
-    // =========================================
-    // GLOBAL STATE
-    // =========================================
-    private Employee currentUser;
+   //GLOBAL...
+    private Employee currentUser; //who is currently logged in
     private SalesSystem salesSystem;
     
     // Layout & Panels
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
+    private CardLayout cardLayout; //only show one card at a time.
+    private JPanel mainPanel; //only show one card.
     private final String LOGIN = "LOGIN";
     private final String DASHBOARD = "DASHBOARD";
     private final String ATTENDANCE = "ATTENDANCE";
@@ -45,7 +43,7 @@ public class MainGUI extends JFrame {
     private DefaultTableModel performanceModel;
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {   //command to tell java to put GUI into the special event dispatch thread so tak glitch or freeze
             try {
                 new MainGUI().setVisible(true);
             } catch (Exception e) {
@@ -56,21 +54,21 @@ public class MainGUI extends JFrame {
 
     public MainGUI() {
         // 1. INITIALIZE DATA 
-        StorageSystem.initialize(); 
+        StorageSystem.initialize(); //load all csv data into memeory before window even opens 
         salesSystem = new SalesSystem((ArrayList<Model>) StorageSystem.allModels);
 
         // 2. SETUP FRAME
         setTitle("GoldenHour Operations System");
-        setSize(1200, 800); // Slightly wider to fit the new stock table
+        setSize(1200, 800); // window dimension
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         // 3. INIT LAYOUT
-        cardLayout = new CardLayout();
+        cardLayout = new CardLayout(); //swapping screens
         mainPanel = new JPanel(cardLayout);
 
         // 4. ADD SCREENS
-        mainPanel.add(createLoginPanel(), LOGIN);
+        mainPanel.add(createLoginPanel(), LOGIN); //visual component
         mainPanel.add(createDashboardPanel(), DASHBOARD);
         mainPanel.add(createAttendancePanel(), ATTENDANCE);
         mainPanel.add(createStockPanel(), STOCK);
@@ -90,15 +88,15 @@ public class MainGUI extends JFrame {
     // 1. LOGIN
     // =======================================================
     private JPanel createLoginPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel panel = new JPanel(new GridBagLayout()); //allows to center items perfectly
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
         JLabel title = new JLabel("GoldenHour System Login");
         title.setFont(new Font("Arial", Font.BOLD, 24));
         JTextField userField = new JTextField(15);
-        JPasswordField passField = new JPasswordField(15);
-        JButton btnLogin = new JButton("Login");
+        JPasswordField passField = new JPasswordField(15); //ensure password shows as ****
+        JButton btnLogin = new JButton("Login"); //loops through storagesystem.allEmployees
 
         gbc.gridx=0; gbc.gridy=0; gbc.gridwidth=2; panel.add(title, gbc);
         gbc.gridwidth=1; gbc.gridy=1; panel.add(new JLabel("User ID:"), gbc);
