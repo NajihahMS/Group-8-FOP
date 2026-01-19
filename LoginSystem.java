@@ -2,63 +2,72 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.Scanner;
-import DataClass.Employee; 
+import DataClass.Employee;
 
 public class LoginSystem {
 
+    // Method to handle employee login
     public static Employee login(Scanner sc) {
+
         System.out.println("=== Employee Login ===");
-        
-        // Use println to ensure "Enter Password" starts on a new line
+
+        // Ask for User ID
         System.out.println("Enter User ID: ");
         String id = sc.nextLine().trim();
 
-        // Check if user wants to exit
+        // Allow user to exit login
         if (id.equalsIgnoreCase("EXIT")) {
             return null;
         }
 
+        // Ask for Password
         System.out.println("Enter Password: ");
         String pass = sc.nextLine().trim();
 
-        // Check against the Central Storage System
+        // Check entered data with stored employee records
         for (Employee e : StorageSystem.allEmployees) {
-            // Case-insensitive ID, Case-sensitive Password
+
+            // ID is case-insensitive, Password is case-sensitive
             if (e.getID().equalsIgnoreCase(id) && e.getPassword().equals(pass)) {
-                System.out.println("Login Successful!"); 
-                
-                // Formatting name and outlet code per requirements
-                // We use substring(0,3) to get the Outlet Code (e.g., C60) from the ID
-                String outletCode = (e.getID().length() >= 3) ? e.getID().substring(0, 3) : "N/A";
+
+                System.out.println("Login Successful!");
+
+                // Get outlet code from first 3 characters of ID
+                String outletCode = (e.getID().length() >= 3)
+                        ? e.getID().substring(0, 3) : "N/A";
+
                 System.out.println("Welcome, " + e.getName() + " (" + outletCode + ")");
                 System.out.println();
-                
-                return e; 
+
+                return e; // Return logged-in employee
             }
         }
 
-        // If loop finishes without return, login failed
-        System.out.println("Login Failed: Invalid User ID or Password."); 
+        // If no matching employee found
+        System.out.println("Login Failed: Invalid User ID or Password.");
         System.out.println();
         return null;
     }
 
+    // Method to register new employees (Manager only)
     public static void registerNewEmployee(Scanner sc, Employee currentUser) {
-        // Security Check: Only Manager can register
+
+        // Authorization check
         if (!currentUser.getRole().equalsIgnoreCase("Manager")) {
-            System.out.println("Error: Only Managers are authorized to register new employees.");
+            System.out.println("Error: Only Managers can register new employees.");
             return;
         }
 
-        System.out.println("\n=== Register New Employee ==="); 
-        
+        System.out.println("\n=== Register New Employee ===");
+
+        // Input employee details
         System.out.println("Enter Employee Name: ");
         String name = sc.nextLine();
 
         System.out.println("Enter Employee ID: ");
         String id = sc.nextLine();
 
-        // Duplicate check
+        // Prevent duplicate ID
         for (Employee e : StorageSystem.allEmployees) {
             if (e.getID().equalsIgnoreCase(id)) {
                 System.out.println("Error: Employee ID already exists.");
@@ -70,20 +79,23 @@ public class LoginSystem {
         String pass = sc.nextLine();
 
         System.out.println("Set Role: ");
-        String role = sc.nextLine(); 
+        String role = sc.nextLine();
 
-        // Update Memory
+        // Create and store new employee
         Employee newEmp = new Employee(id, name, role, pass);
         StorageSystem.allEmployees.add(newEmp);
 
-        // Update CSV File
-        try (FileWriter fw = new FileWriter("employees.csv", true); 
+        // Save data permanently into CSV file
+        try (FileWriter fw = new FileWriter("employees.csv", true);
              PrintWriter pw = new PrintWriter(fw)) {
+
             pw.println(id + "," + name + "," + role + "," + pass);
-            System.out.println("Employee successfully registered!"); 
+            System.out.println("Employee successfully registered!");
+
         } catch (IOException e) {
             System.out.println("Error: Could not save to database.");
         }
+
         System.out.println();
     }
 }
